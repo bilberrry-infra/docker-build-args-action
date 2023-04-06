@@ -5,13 +5,13 @@ author: 'Alex Mukho'
 inputs:
   includeVars:
     required: false
-    description: 'Include action variables to docker arguments list'
+    description: 'Action variables for docker arguments list'
   includeSecrets:
     required: false
-    description: 'Include action secrets to docker arguments list'
+    description: 'Action secrets for docker arguments list'
   extraArgs:
     required: false
-    description: 'Include extra values to docker arguments list'
+    description: 'Extra values for docker arguments list'
 
 outputs:
   args:
