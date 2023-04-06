@@ -6,11 +6,9 @@ inputs:
   includeVars:
     required: false
     description: 'Include action variables to docker arguments list'
-    default: true
   includeSecrets:
     required: false
     description: 'Include action secrets to docker arguments list'
-    default: false
   extraArgs:
     required: false
     description: 'Include extra values to docker arguments list'

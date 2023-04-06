@@ -2,18 +2,24 @@ import * as core from '@actions/core'
 
 async function run(): Promise<void> {
   try {
-    const includeVars: boolean = core.getBooleanInput('includeVars')
-    const includeSecrets: boolean = core.getBooleanInput('includeSecrets')
-    const extraArgs: string[] = core.getMultilineInput('extraArgs');
+    const includeVars: string = core.getInput('includeVars')
+    const includeSecrets: string = core.getInput('includeSecrets')
+    const extraArgs: string[] = core.getMultilineInput('extraArgs')
 
     const builArgs: string[] = [];
 
     if (includeVars) {
-      console.log(process.env)
+      let obj = JSON.parse(includeVars);
+      (Object.keys(obj) as (keyof typeof obj)[]).forEach((key) => {
+        builArgs.push(key as string + '=' + obj[key]);
+      });
     }
 
     if (includeSecrets) {
-      console.log(includeSecrets)
+      let obj = JSON.parse(includeSecrets);
+      (Object.keys(obj) as (keyof typeof obj)[]).forEach((key) => {
+        builArgs.push(key as string + '=' + obj[key]);
+      });
     }
 
     builArgs.push(...extraArgs);

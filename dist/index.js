@@ -43,12 +43,15 @@ const core = __importStar(__nccwpck_require__(186));
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const includeVars = core.getBooleanInput('includeVars');
-            const includeSecrets = core.getBooleanInput('includeSecrets');
+            const includeVars = core.getInput('includeVars');
+            const includeSecrets = core.getInput('includeSecrets');
             const extraArgs = core.getMultilineInput('extraArgs');
             const builArgs = [];
             if (includeVars) {
-                console.log(process.env);
+                let obj = JSON.parse(includeVars);
+                Object.keys(obj).forEach((key) => {
+                    builArgs.push(key + '=' + obj[key]);
+                });
             }
             if (includeSecrets) {
                 console.log(includeSecrets);
