@@ -1,6 +1,9 @@
 name: 'docker-build-args'
 description: 'Builds arguments list for docker/build-push-action'
 author: 'Alex Mukho'
+branding:
+  icon: 'box'
+  color: 'gray-dark'
 
 inputs:
   includeVars:
