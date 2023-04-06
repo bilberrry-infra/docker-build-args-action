@@ -6,23 +6,23 @@ async function run(): Promise<void> {
     const includeSecrets: string = core.getInput('includeSecrets')
     const extraArgs: string[] = core.getMultilineInput('extraArgs')
 
-    const builArgs: string[] = [];
+    const builArgs: string[] = []
 
     if (includeVars) {
-      let obj = JSON.parse(includeVars);
-      (Object.keys(obj) as (keyof typeof obj)[]).forEach((key) => {
-        builArgs.push(key as string + '=' + obj[key]);
-      });
+      const obj = JSON.parse(includeVars)
+      for (const item of Object.entries(obj)) {
+        builArgs.push(`${item[0]}=${item[1]}`)
+      }
     }
 
     if (includeSecrets) {
-      let obj = JSON.parse(includeSecrets);
-      (Object.keys(obj) as (keyof typeof obj)[]).forEach((key) => {
-        builArgs.push(key as string + '=' + obj[key]);
-      });
+      const obj = JSON.parse(includeSecrets)
+      for (const item of Object.entries(obj)) {
+        builArgs.push(`${item[0]}=${item[1]}`)
+      }
     }
 
-    builArgs.push(...extraArgs);
+    builArgs.push(...extraArgs)
 
     core.setOutput('args', builArgs)
   } catch (error) {

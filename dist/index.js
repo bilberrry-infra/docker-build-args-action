@@ -48,13 +48,16 @@ function run() {
             const extraArgs = core.getMultilineInput('extraArgs');
             const builArgs = [];
             if (includeVars) {
-                let obj = JSON.parse(includeVars);
-                Object.keys(obj).forEach((key) => {
-                    builArgs.push(key + '=' + obj[key]);
-                });
+                const obj = JSON.parse(includeVars);
+                for (const item of Object.entries(obj)) {
+                    builArgs.push(`${item[0]}=${item[1]}`);
+                }
             }
             if (includeSecrets) {
-                console.log(includeSecrets);
+                const obj = JSON.parse(includeSecrets);
+                for (const item of Object.entries(obj)) {
+                    builArgs.push(`${item[0]}=${item[1]}`);
+                }
             }
             builArgs.push(...extraArgs);
             core.setOutput('args', builArgs);
