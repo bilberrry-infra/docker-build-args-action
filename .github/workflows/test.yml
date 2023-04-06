@@ -20,9 +20,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./
+        id: action
         with:
           includeVars: ${{ toJson(vars) }}
           includeSecrets: ${{ toJson(secrets) }}
           extraArgs: |
             ARG1=test1
             ARG2=test2
+      - run: echo "${{ toJson(steps.action.outputs.args) }}"
