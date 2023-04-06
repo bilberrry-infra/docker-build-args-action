@@ -38,33 +38,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(186));
-const action_input_parser_1 = __importDefault(__nccwpck_require__(623));
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const includeVars = action_input_parser_1.default.getInput('includeVars', {
-                type: 'boolean'
-            });
-            const includeSecrets = action_input_parser_1.default.getInput('includeSecrets', {
-                type: 'boolean'
-            });
-            const extraArgs = action_input_parser_1.default.getInput('extraArgs', {
-                type: 'array'
-            });
+            const includeVars = core.getBooleanInput('includeVars');
+            const includeSecrets = core.getBooleanInput('includeSecrets');
+            const extraArgs = core.getMultilineInput('extraArgs');
+            const builArgs = [];
             if (includeVars) {
+                console.log(process.env);
             }
             if (includeSecrets) {
+                console.log(includeSecrets);
             }
-            console.log(extraArgs);
-            // core.debug(new Date().toTimeString())
-            // await wait(parseInt(ms, 10))
-            // core.debug(new Date().toTimeString())
-            core.setOutput('time', new Date().toTimeString());
+            builArgs.push(...extraArgs);
+            core.setOutput('args', builArgs);
         }
         catch (error) {
             if (error instanceof Error)
@@ -1850,229 +1840,6 @@ function isLoopbackAddress(host) {
         hostLower.startsWith('[0:0:0:0:0:0:0:1]'));
 }
 //# sourceMappingURL=proxy.js.map
-
-/***/ }),
-
-/***/ 623:
-/***/ (function(module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getInput = void 0;
-var dotenv_1 = __importDefault(__nccwpck_require__(437));
-dotenv_1.default.config();
-var VALID_TYPES = ['string', 'array', 'boolean', 'number'];
-var DEFAULT_OPTIONS = {
-    required: false,
-    type: 'string',
-    disableable: false
-};
-var getEnvVar = function (key) {
-    var parsed = process.env["INPUT_".concat(key.replace(/ /g, '_').toUpperCase())];
-    var raw = process.env[key];
-    return parsed || raw || undefined;
-};
-var parseArray = function (val) {
-    var array = val.split('\n').join(',').split(',');
-    var filtered = array.filter(function (n) { return n; });
-    return filtered.map(function (n) { return n.trim(); });
-};
-var parseBoolean = function (val) {
-    var trueValue = ['true', 'True', 'TRUE'];
-    var falseValue = ['false', 'False', 'FALSE'];
-    if (trueValue.includes(val))
-        return true;
-    if (falseValue.includes(val))
-        return false;
-    throw new Error('boolean input has to be one of \`true | True | TRUE | false | False | FALSE\`');
-};
-var parseNumber = function (val) {
-    var parsed = Number(val);
-    if (isNaN(parsed))
-        throw new Error('input has to be a valid number');
-    return parsed;
-};
-var parseValue = function (val, type) {
-    if (type === 'array') {
-        return parseArray(val);
-    }
-    if (type === 'boolean') {
-        return parseBoolean(val);
-    }
-    if (type === 'number') {
-        return parseNumber(val);
-    }
-    return val.trim();
-};
-var getInput = function (key, opts) {
-    var parsedOptions;
-    if (typeof key === 'string' || Array.isArray(key)) {
-        parsedOptions = __assign({ key: key }, opts);
-    }
-    else if (typeof key === 'object') {
-        parsedOptions = key;
-    }
-    else {
-        throw new Error('No key for input specified');
-    }
-    if (!parsedOptions.key)
-        throw new Error('No key for input specified');
-    var options = Object.assign({}, DEFAULT_OPTIONS, parsedOptions);
-    if (VALID_TYPES.includes(options.type) === false)
-        throw new Error('option type has to be one of `string | array | boolean | number`');
-    var val = typeof options.key === 'string' ? getEnvVar(options.key) : options.key.map(function (key) { return getEnvVar(key); }).filter(function (item) { return item; })[0];
-    if (options.disableable && val === 'false')
-        return undefined;
-    var parsed = val !== undefined ? parseValue(val, options.type) : undefined;
-    if (parsed === undefined) {
-        if (options.required)
-            throw new Error("Input `".concat(options.key, "` is required but was not provided."));
-        if (options.default !== undefined)
-            return options.default;
-        return undefined;
-    }
-    if (options.modifier)
-        return options.modifier(parsed);
-    return parsed;
-};
-exports.getInput = getInput;
-module.exports.getInput = exports.getInput;
-
-
-/***/ }),
-
-/***/ 437:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-/* @flow */
-/*::
-
-type DotenvParseOptions = {
-  debug?: boolean
-}
-
-// keys and values from src
-type DotenvParseOutput = { [string]: string }
-
-type DotenvConfigOptions = {
-  path?: string, // path to .env file
-  encoding?: string, // encoding of .env file
-  debug?: string // turn on logging for debugging purposes
-}
-
-type DotenvConfigOutput = {
-  parsed?: DotenvParseOutput,
-  error?: Error
-}
-
-*/
-
-const fs = __nccwpck_require__(147)
-const path = __nccwpck_require__(17)
-
-function log (message /*: string */) {
-  console.log(`[dotenv][DEBUG] ${message}`)
-}
-
-const NEWLINE = '\n'
-const RE_INI_KEY_VAL = /^\s*([\w.-]+)\s*=\s*(.*)?\s*$/
-const RE_NEWLINES = /\\n/g
-const NEWLINES_MATCH = /\n|\r|\r\n/
-
-// Parses src into an Object
-function parse (src /*: string | Buffer */, options /*: ?DotenvParseOptions */) /*: DotenvParseOutput */ {
-  const debug = Boolean(options && options.debug)
-  const obj = {}
-
-  // convert Buffers before splitting into lines and processing
-  src.toString().split(NEWLINES_MATCH).forEach(function (line, idx) {
-    // matching "KEY' and 'VAL' in 'KEY=VAL'
-    const keyValueArr = line.match(RE_INI_KEY_VAL)
-    // matched?
-    if (keyValueArr != null) {
-      const key = keyValueArr[1]
-      // default undefined or missing values to empty string
-      let val = (keyValueArr[2] || '')
-      const end = val.length - 1
-      const isDoubleQuoted = val[0] === '"' && val[end] === '"'
-      const isSingleQuoted = val[0] === "'" && val[end] === "'"
-
-      // if single or double quoted, remove quotes
-      if (isSingleQuoted || isDoubleQuoted) {
-        val = val.substring(1, end)
-
-        // if double quoted, expand newlines
-        if (isDoubleQuoted) {
-          val = val.replace(RE_NEWLINES, NEWLINE)
-        }
-      } else {
-        // remove surrounding whitespace
-        val = val.trim()
-      }
-
-      obj[key] = val
-    } else if (debug) {
-      log(`did not match key and value when parsing line ${idx + 1}: ${line}`)
-    }
-  })
-
-  return obj
-}
-
-// Populates process.env from .env file
-function config (options /*: ?DotenvConfigOptions */) /*: DotenvConfigOutput */ {
-  let dotenvPath = path.resolve(process.cwd(), '.env')
-  let encoding /*: string */ = 'utf8'
-  let debug = false
-
-  if (options) {
-    if (options.path != null) {
-      dotenvPath = options.path
-    }
-    if (options.encoding != null) {
-      encoding = options.encoding
-    }
-    if (options.debug != null) {
-      debug = true
-    }
-  }
-
-  try {
-    // specifying an encoding returns a string instead of a buffer
-    const parsed = parse(fs.readFileSync(dotenvPath, { encoding }), { debug })
-
-    Object.keys(parsed).forEach(function (key) {
-      if (!Object.prototype.hasOwnProperty.call(process.env, key)) {
-        process.env[key] = parsed[key]
-      } else if (debug) {
-        log(`"${key}" is already defined in \`process.env\` and will not be overwritten`)
-      }
-    })
-
-    return { parsed }
-  } catch (e) {
-    return { error: e }
-  }
-}
-
-module.exports.config = config
-module.exports.parse = parse
-
 
 /***/ }),
 

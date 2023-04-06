@@ -1,29 +1,24 @@
 import * as core from '@actions/core'
-import parser from 'action-input-parser'
 
 async function run(): Promise<void> {
   try {
-    const includeVars = parser.getInput('includeVars', {
-      type: 'boolean'
-    })
-    const includeSecrets = parser.getInput('includeSecrets', {
-      type: 'boolean'
-    })
-    const extraArgs = parser.getInput('extraArgs', {
-      type: 'array'
-    })
+    const includeVars: boolean = core.getBooleanInput('includeVars')
+    const includeSecrets: boolean = core.getBooleanInput('includeSecrets')
+    const extraArgs: string[] = core.getMultilineInput('extraArgs');
+
+    const builArgs: string[] = [];
 
     if (includeVars) {
-      console.log(includeVars)
+      console.log(process.env)
     }
 
     if (includeSecrets) {
       console.log(includeSecrets)
     }
 
-    console.log(extraArgs)
+    builArgs.push(...extraArgs);
 
-    core.setOutput('time', new Date().toTimeString())
+    core.setOutput('args', builArgs)
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
   }
