@@ -60,6 +60,7 @@ function run() {
                 }
             }
             builArgs.push(...extraArgs);
+            core.info(builArgs.join('\n'));
             core.setOutput('args', builArgs.join('\n'));
         }
         catch (error) {
